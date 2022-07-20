@@ -1,4 +1,5 @@
 import React from 'react';
+import Admin from '@/Layouts/Admin';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,7 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 const Index = ({ users }) => {
     return (
-        <>
+        <Admin>
             <Button variant="contained" color="primary" startIcon={<AddIcon />} href="/users/create">
                 Crear usuario
             </Button>
@@ -51,7 +52,7 @@ const Index = ({ users }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </>
+        </Admin>
     );
 }
 export default Index;

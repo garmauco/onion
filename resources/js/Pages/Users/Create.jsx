@@ -1,9 +1,12 @@
 import { Inertia } from '@inertiajs/inertia';
+import Admin from '@/Layouts/Admin';
 import { usePage } from '@inertiajs/inertia-react'
 import React,{useState} from 'react';
 import Box from '@mui/material/Box';
-import { TextField } from '@mui/material';
+import { FormControl, TextField } from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@/Components/Button';
+import Container from '@mui/material/Container';
 
 const Create = () => {
 
@@ -27,28 +30,32 @@ const Create = () => {
     const { errors } = usePage().props
 
     return (
-        <>
+        <Admin>
+            <Container maxWidth="lg">
             <h1>Crear usuario</h1>
             <Box
             sx={{ display: 'flex', flexWrap: 'wrap'}}
             component="form" onSubmit={SaveData}>
+                <FormControl variant='standard'>
                 <TextField
                 label="Nombre"
                 id="first_name"
-                sx={{ width: '48%', margin: '0.5%' }}
                 variant="filled"
                 value={first_name}
                 onChange={(e) => setFirstName(e.target.value)}
                 />
-                {errors.first_name && <div>{errors.first_name}</div>}
+                {errors.first_name && <FormHelperText error>{errors.first_name}</FormHelperText>}
+                </FormControl>
+                <FormControl variant='standard'>
                 <TextField
                 label="Apellido"
                 id="last_name"
-                sx={{ width: '48%', margin: '0.5%' }}
                 variant="filled"
                 value={last_name}
                 onChange={(e) => setLastName(e.target.value)}
                 />
+                {errors.last_name && <FormHelperText error>{errors.last_name}</FormHelperText>}
+                </FormControl>
                 <TextField
                 label="Teléfono"
                 id="phone"
@@ -77,7 +84,8 @@ const Create = () => {
                     Crear
                 </Button>
             </Box>
-        </>
+            </Container>
+        </Admin>
     );
 }
 export default Create;
