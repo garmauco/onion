@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Admin from '@/Layouts/Admin';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,8 +10,17 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
+import { Dialog, DialogActions, DialogTitle } from '@mui/material';
+import CustomPagination from '../Pagination/Index';
 
 const Index = ({ users }) => {
+    const [openDelete, setOpenDelete] = useState(false);
+    const [userDelete, setUserDelete] = useState(null);
+
+    const handleDelete = (id) => {
+        setOpenDelete(true);
+        setUserDelete(id);
+    }
     return (
         <Admin>
             <Button variant="contained" color="primary" startIcon={<AddIcon />} href="/users/create">
@@ -29,7 +38,7 @@ const Index = ({ users }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {users.map(user => (
+                        {users.data.map(user => (
                             <TableRow key={user.id}>
                                 <TableCell component="th" scope="row">
                                     {user.first_name} {user.last_name}
@@ -39,12 +48,30 @@ const Index = ({ users }) => {
                                 <TableCell align="left">Rol</TableCell>
                                 <TableCell align="left">
                                     <Stack direction="row" spacing={2} align="center">
-                                        <Button variant="contained" color="primary">
+                                        <Button variant="contained" color="primary" href={`/users/edit/${user.id}`}>
                                             Editar
                                         </Button>
-                                        <Button variant="contained" color="error">
+                                        <Button variant="contained" color="error" onClick={() => handleDelete(user.id)}>
                                             Eliminar
                                         </Button>
+                                        <Dialog
+                                            open={openDelete}
+                                            onClose={() => setOpenDelete(false)}
+                                            aria-labelledby="alert-dialog-title"
+                                            aria-describedby="alert-dialog-description"
+                                        >
+                                            <DialogTitle id="alert-dialog-title">
+                                                ¿Estás seguro que deseas eliminar este usuario?
+                                            </DialogTitle>
+                                            <DialogActions>
+                                            <Button variant="contained" color="info" onClick={() => setOpenDelete(false)} sx={{marginRight: '1rem'}}>
+                                                Cancelar
+                                            </Button>
+                                            <Button variant="contained" color="error" href={`/users/delete/${userDelete}`}>
+                                                Eliminar
+                                            </Button>
+                                            </DialogActions>
+                                        </Dialog>
                                     </Stack>
                                 </TableCell>
                             </TableRow>
@@ -52,6 +79,7 @@ const Index = ({ users }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <CustomPagination links={users} />
         </Admin>
     );
 }

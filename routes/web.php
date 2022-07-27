@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,7 +38,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
         Route::get('/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/save', [UserController::class, 'store'])->name('users.save');
+        Route::post('/store', [UserController::class, 'store'])->name('users.save');
+        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+        Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::get('/delete/{id}', [UserController::class, 'destroy'])->name('users.delete');
+    });
+    Route::prefix('roles')->group(function (){
+        Route::get('/', [RoleController::class, 'index'])->name('roles.index');
     });
 });
 

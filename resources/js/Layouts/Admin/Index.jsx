@@ -1,35 +1,17 @@
-import React from 'react';
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/inertia-react';
+import React, {useState, useEffect} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Alert, Box, Snackbar } from '@mui/material';
 import { drawerWidth } from '@/Layouts/Admin/constants';
 import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar from '@mui/material/AppBar';
 import SideBar from './SideBar';
 import Header from './Header';
+import { usePage } from '@inertiajs/inertia-react';
 
-const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== 'open',
-  })(({ theme, open }) => ({
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    ...(open && {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: `${drawerWidth}px`,
-      transition: theme.transitions.create(['margin', 'width'], {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    }),
-  }));
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
         flexGrow: 1,
-            padding: theme.spacing(3),
+            padding: theme.spacing(10, 3),
             transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
@@ -46,29 +28,52 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 );
 
 export default function Index({ children }) {
+    const { flash } = usePage().props
     const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+    //pasamos a true el snackbar cuando se recibe un mensaje
+    useEffect(() =>{
+        if (flash) { //si flash esta seteado
+            setOpenSnackbar(true);
+        }
+    }, [flash]) // el [flash] es para que se ejecute solo cuando cambie la variable flash
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <Header open={open} handleDrawerOpen={handleDrawerOpen} />
-        <Main open={open}>
-        <SideBar
-            open={open}
-            handleDrawerClose={handleDrawerClose}
-        />
-        <Box sx={{ flexGrow: 1 }}>
-            {children}
+            <SideBar
+                open={open}
+                handleDrawerClose={handleDrawerClose}
+                theme={theme}
+            />
+            <Main open={open}>
+                <Header
+                    open={open}
+                    handleDrawerOpen={handleDrawerOpen}
+                />
+                <Box sx={{ flexGrow: 1 }}>
+                    {flash.success && (
+                    <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+                        <Alert severity="success" onClose={() => setOpenSnackbar(false)}>{flash.success}</Alert>
+                    </Snackbar>
+                    )}
+                    {flash.error && (
+                    <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+                        <Alert severity="error" onClose={() => setOpenSnackbar(false)}>{flash.error}</Alert>
+                    </Snackbar>
+                    )}
+                    {children}
+                </Box>
+            </Main>
         </Box>
-      </Main>
-    </Box>
     );
 }
